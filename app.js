@@ -34,6 +34,9 @@ if (filteredCountries.length > 0) {
     const id = uuidv4();
     countryUUIDMap[c.isoCode] = id;
     const timezones = JSON.stringify(c.timezones || []).replace(/'/g, "''");
+    const location = (c.longitude && c.latitude) 
+      ? `ST_MakePoint(${c.longitude}, ${c.latitude})::geography` 
+      : 'NULL';
     return `(${[
       esc(id),
       esc(c.name),
@@ -43,11 +46,12 @@ if (filteredCountries.length > 0) {
       esc(c.currency),
       esc(c.latitude),
       esc(c.longitude),
+      location,
       esc(timezones)
     ].join(', ')})`;
   }).join(',\n');
     const countrySQL = `INSERT INTO countries (
-    'id', 'name', 'iso_code', 'flag', 'phone_code', 'currency', 'latitude', 'longitude', 'timezones'
+    'id', 'name', 'iso_code', 'flag', 'phone_code', 'currency', 'latitude', 'longitude', 'location', 'timezones'
   ) VALUES
   ${countryValues};
 `;
@@ -61,18 +65,22 @@ if (filteredStates.length > 0) {
   const id = uuidv4();
   stateUUIDMap[`${s.countryCode}-${s.isoCode}`] = id;
   const country_id = countryUUIDMap[s.countryCode];
+  const location = (s.longitude && s.latitude) 
+      ? `ST_MakePoint(${s.longitude}, ${s.latitude})::geography` 
+      : 'NULL';
   return `(${[
     esc(id),
     esc(s.name),
     esc(s.isoCode),
     esc(country_id),
     esc(s.latitude),
-    esc(s.longitude)
+    esc(s.longitude),
+    location,
   ].join(', ')})`;
   }).join(',\n');
 
   const stateSQL = `INSERT INTO states (
-    'id', 'name', 'iso_code', 'country_id', 'latitude', 'longitude'
+    'id', 'name', 'iso_code', 'country_id', 'latitude', 'longitude', 'location'
   ) VALUES
   ${stateValues};
 `;
@@ -86,6 +94,9 @@ if (filteredCities.length > 0) {
     const [name, countryCode, stateCode, latitude, longitude] = c;
     const id = uuidv4();
     const state_id = stateUUIDMap[`${countryCode}-${stateCode}`];
+    const location = (longitude && latitude) 
+      ? `ST_MakePoint(${longitude}, ${latitude})::geography` 
+      : 'NULL';
     return `(${[
       esc(id),
       esc(state_id),
@@ -93,12 +104,13 @@ if (filteredCities.length > 0) {
       esc(countryCode),
       esc(stateCode),
       esc(latitude),
-      esc(longitude)
+      esc(longitude),
+      location,
     ].join(', ')})`;
   }).join(',\n');
 
   const citySQL = `INSERT INTO cities (
-    'id', 'state_id', 'name', 'country_code', 'state_code', 'latitude', 'longitude'
+    'id', 'state_id', 'name', 'country_code', 'state_code', 'latitude', 'longitude', 'location'
   ) VALUES
   ${cityValues};
   
