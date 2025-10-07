@@ -1,4 +1,5 @@
-const fs = require('fs');
+import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 // Step 1. Read JSON files
 const countries = JSON.parse(fs.readFileSync('./countries.json', 'utf-8'));
@@ -24,14 +25,17 @@ const esc = (val) => {
   return `'${String(val).replace(/'/g, "''")}'`;
 };
 
-// Step 4. Generate SQL
-let sql = "";
+const countryUUIDMap = {};
+const stateUUIDMap = {};
 
 // --- Countries ---
 if (filteredCountries.length > 0) {
   const countryValues = filteredCountries.map(c => {
+    const id = uuidv4();
+    countryUUIDMap[c.isoCode] = id;
     const timezones = JSON.stringify(c.timezones || []).replace(/'/g, "''");
     return `(${[
+      esc(id),
       esc(c.name),
       esc(c.isoCode),
       esc(c.flag),
@@ -43,7 +47,7 @@ if (filteredCountries.length > 0) {
     ].join(', ')})`;
   }).join(',\n');
     const countrySQL = `INSERT INTO countries (
-    name, iso_code, flag, phone_code, currency, latitude, longitude, timezones
+    'id', 'name', 'iso_code', 'flag', 'phone_code', 'currency', 'latitude', 'longitude', 'timezones'
   ) VALUES
   ${countryValues};
 `;
@@ -53,16 +57,22 @@ fs.writeFileSync('countries.sql', countrySQL);
 
 // --- States ---
 if (filteredStates.length > 0) {
-  const stateValues = filteredStates.map(s => `(${[
+  const stateValues = filteredStates.map(s => {
+  const id = uuidv4();
+  stateUUIDMap[`${s.countryCode}-${s.isoCode}`] = id;
+  const country_id = countryUUIDMap[s.countryCode];
+  return `(${[
+    esc(id),
     esc(s.name),
     esc(s.isoCode),
-    esc(s.countryCode),
+    esc(country_id),
     esc(s.latitude),
     esc(s.longitude)
-  ].join(', ')})`).join(',\n');
+  ].join(', ')})`;
+  }).join(',\n');
 
   const stateSQL = `INSERT INTO states (
-    name, iso_code, country_code, latitude, longitude
+    'id', 'name', 'iso_code', 'country_id', 'latitude', 'longitude'
   ) VALUES
   ${stateValues};
 `;
@@ -74,7 +84,11 @@ console.log(`✅ Wrote ${filteredStates.length} states to states.sql`);
 if (filteredCities.length > 0) {
   const cityValues = filteredCities.map(c => {
     const [name, countryCode, stateCode, latitude, longitude] = c;
+    const id = uuidv4();
+    const state_id = stateUUIDMap[`${countryCode}-${stateCode}`];
     return `(${[
+      esc(id),
+      esc(state_id),
       esc(name),
       esc(countryCode),
       esc(stateCode),
@@ -84,7 +98,7 @@ if (filteredCities.length > 0) {
   }).join(',\n');
 
   const citySQL = `INSERT INTO cities (
-    name, country_code, state_code, latitude, longitude
+    'id', 'state_id', 'name', 'country_code', 'state_code', 'latitude', 'longitude'
   ) VALUES
   ${cityValues};
   
