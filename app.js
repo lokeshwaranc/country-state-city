@@ -44,14 +44,14 @@ if (filteredCountries.length > 0) {
       esc(c.flag),
       esc(c.phonecode),
       esc(c.currency),
-      esc(c.latitude),
-      esc(c.longitude),
+      c.latitude,
+      c.longitude,
       location,
       esc(timezones)
     ].join(', ')})`;
   }).join(',\n');
-    const countrySQL = `INSERT INTO 'countries' (
-    'id', 'name', 'iso_code', 'flag', 'phone_code', 'currency', 'latitude', 'longitude', 'location', 'timezones'
+    const countrySQL = `INSERT INTO "countries" (
+    "id", "name", "iso_code", "flag", "phone_code", "currency", "latitude", "longitude", "location", "timezones"
   ) VALUES
   ${countryValues};
 `;
@@ -73,14 +73,14 @@ if (filteredStates.length > 0) {
     esc(s.name),
     esc(s.isoCode),
     esc(country_id),
-    esc(s.latitude),
-    esc(s.longitude),
+    s.latitude,
+    s.longitude,
     location,
   ].join(', ')})`;
   }).join(',\n');
 
-  const stateSQL = `INSERT INTO 'states' (
-    'id', 'name', 'iso_code', 'country_id', 'latitude', 'longitude', 'location'
+  const stateSQL = `INSERT INTO "states" (
+    "id", "name", "iso_code", "country_id", "latitude", "longitude", "location"
   ) VALUES
   ${stateValues};
 `;
@@ -103,14 +103,14 @@ if (filteredCities.length > 0) {
       esc(name),
       esc(countryCode),
       esc(stateCode),
-      esc(latitude),
-      esc(longitude),
+      latitude,
+      longitude,
       location,
     ].join(', ')})`;
   }).join(',\n');
 
-  const citySQL = `INSERT INTO 'cities' (
-    'id', 'state_id', 'name', 'country_code', 'state_code', 'latitude', 'longitude', 'location'
+  const citySQL = `INSERT INTO "cities" (
+    "id", "state_id", "name", "country_code", "state_code", "latitude", "longitude", "location"
   ) VALUES
   ${cityValues};
   
