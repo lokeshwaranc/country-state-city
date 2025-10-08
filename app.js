@@ -24,6 +24,7 @@ const esc = (val) => {
   if (typeof val === 'number') return val;
   return `'${String(val).replace(/'/g, "''")}'`;
 };
+const nullifyNum = (val) => (val === null || val === undefined || val === '' ? 'NULL' : val);
 
 const countryUUIDMap = {};
 const stateUUIDMap = {};
@@ -44,8 +45,8 @@ if (filteredCountries.length > 0) {
       esc(c.flag),
       esc(c.phonecode),
       esc(c.currency),
-      c.latitude,
-      c.longitude,
+      nullifyNum(c.latitude),
+      nullifyNum(c.longitude),
       location,
       esc(timezones)
     ].join(', ')})`;
@@ -73,8 +74,8 @@ if (filteredStates.length > 0) {
     esc(s.name),
     esc(s.isoCode),
     esc(country_id),
-    s.latitude,
-    s.longitude,
+    nullifyNum(s.latitude),
+    nullifyNum(s.longitude),
     location,
   ].join(', ')})`;
   }).join(',\n');
@@ -103,8 +104,8 @@ if (filteredCities.length > 0) {
       esc(name),
       esc(countryCode),
       esc(stateCode),
-      latitude,
-      longitude,
+      nullifyNum(latitude),
+      nullifyNum(longitude),
       location,
     ].join(', ')})`;
   }).join(',\n');
