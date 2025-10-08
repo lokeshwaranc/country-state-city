@@ -6,7 +6,7 @@ It is based on the country-state-city npm package.
 1. Install Node.js and npm
 Make sure you have Node.js and npm installed.
 If not, install them using Homebrew:
-bashbrew install node
+bash brew install node
 2. Copy Data Files
 Download or copy the latest JSON data files from the assets directory of the country-state-city package.
 Place these files in your project root directory:
