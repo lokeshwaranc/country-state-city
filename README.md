@@ -16,6 +16,10 @@ Place these files in your project root directory:
 ```states.json```
 ```cities.json```
 ### 3. Run the Script
+Install npm packages
+```bash
+npm install
+```
 Execute the script using Node:
 ```bash
 node app.js
