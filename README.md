@@ -1,6 +1,6 @@
 🗺️ JSON to SQL Query Generator (Country, State, City)
 This script converts country, state, and city data from JSON files into SQL INSERT statements.
-It is based on the country-state-city npm package.
+It is based on the [country-state-city](npmjs.com/package/country-state-city/v/3.0.1-beta.1) npm package.
 
 📦 Setup Instructions
 ### 1. Install Node.js and npm
