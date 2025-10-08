@@ -55,8 +55,23 @@ INSERT INTO "cities" (
 ) VALUES
 ('f9e8d7c6-3456-7891-0123-abcdefabcdef', 'd8a3b2f1-2345-6789-9101-abcdefabcdef', 'Mumbai', 'IN', 'MH', 19.076, 72.8777, ST_MakePoint(72.8777, 19.076)::geography);
 ```
-### 💡 Notes
+#### 💡 Notes
 
 The script automatically generates UUIDs for each record.
 If latitude or longitude is missing, NULL is used instead of coordinates.
 The location field uses PostgreSQL's geography type via ST_MakePoint(lon, lat).
+
+#### Install PostGIS extension
+```bash
+brew info postgis
+```
+#### Create an extension in your Psql Database
+##### uuid
+```sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+```
+##### postgis
+```sql
+CREATE EXTENSION IF NOT EXISTS postgis
+```
+
